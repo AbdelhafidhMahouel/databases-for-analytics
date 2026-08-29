@@ -1,6 +1,6 @@
 # Exercise 01: World Database SQL Practice
 
-- Name:
+- Name: Abdelhafidh Mahouel
 - Course: Database for Analytics
 - Module: 1
 - Database Used: World Database
@@ -35,13 +35,20 @@ Why were these data types selected?
 
 ### Answer
 
-_Write your explanation here._
+`country.Population` uses the `INT` data type, while
+`country.LifeExpectancy` uses the `DECIMAL(3,1)` data type.
+
+`Population` uses `INT` because it represents a count of people, which
+is normally recorded as a whole number. In comparison, `LifeExpectancy`
+uses `DECIMAL(3,1)` because it represents an estimated number of years
+that may include a fractional value. The `DECIMAL(3,1)` type supports
+three total digits with one digit after the decimal point, such as
+`72.5`.
 
 ### Screenshot
 
-_Show the table structure or DESCRIBE output._
-
 ```sql
+USE world;
 DESCRIBE country;
 ```
 
@@ -56,7 +63,14 @@ Why do you think this data type was selected?
 
 ### Answer
 
-_Write your explanation here._
+The data type of `country.IndepYear` is `SMALLINT`.
+
+This data type was likely selected because an independence year is
+stored as a whole number without a decimal value. `SMALLINT` requires
+less storage than a regular `INT` while still providing a sufficient
+range for historical years. The column also permits `NULL` values
+because some countries or territories may not have an applicable or
+known independence year.
 
 ### Screenshot
 
@@ -75,7 +89,16 @@ Explain why your proposed data type might be better in some situations.
 
 ### Answer
 
-_Write your explanation here._
+The `YEAR` data type could be used instead of `SMALLINT` when the
+database contains only modern independence years. `YEAR` would make the
+purpose of the column clearer because it is specifically designed to
+store year values. It could also provide better validation by limiting
+the column to valid years instead of allowing unrelated integer values.
+
+However, MySQL's `YEAR` data type has a limited supported range.
+Therefore, it may not be suitable for ancient or BCE independence
+years. In those situations, the existing `SMALLINT` data type would
+remain more flexible.
 
 ---
 
@@ -159,9 +182,19 @@ Write a SQL command to **update the city named `"Nashville-Davidson"` to `"Nashv
 ### SQL
 
 ```sql
+USE world;
+
+SET SQL_SAFE_UPDATES = 0;
+
 UPDATE city
 SET Name = 'Nashville'
 WHERE Name = 'Nashville-Davidson';
+
+SET SQL_SAFE_UPDATES = 1;
+
+SELECT ID, Name, CountryCode
+FROM city
+WHERE ID = 3814;
 ```
 
 ### Screenshot
@@ -179,8 +212,14 @@ Use reasonable values for the remaining columns.
 ### SQL
 
 ```sql
+USE world;
+
 INSERT INTO country (Code, Name, Continent, Region, Population)
 VALUES ('NAR', 'Narnia', 'Europe', 'Fantasy', 1000000);
+
+SELECT Code, Name, Continent, Region, Population
+FROM country
+WHERE Code = 'NAR';
 ```
 
 ### Screenshot
@@ -198,7 +237,15 @@ Write a SQL command to **delete the country with the country code `"NAR"`**.
 ```sql
 DELETE FROM country
 WHERE Code = 'NAR';
+
+SELECT COUNT(*) AS narnia_records
+FROM country
+WHERE Code = 'NAR';
 ```
+
+**Note:** The `DELETE` statement removes the country with the code
+`NAR`. The second statement is only used to verify the deletion. The
+result of `0` confirms that no record with the code `NAR` remains.
 
 ### Screenshot
 

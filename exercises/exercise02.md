@@ -112,6 +112,9 @@ Do **not** repeat any form of government more than once.
 ```sql
 SELECT DISTINCT GovernmentForm FROM country;
 ```
+### Screenshot
+
+![Q5 Screenshot](screenshots/q5_government_forms2.png)
 
 ## Question 6
 

@@ -1,6 +1,6 @@
 # Exercise 03: MongoDB – Document Queries and Analysis
 
-- Name:
+- Name: Abdelhafidh Mahouel
 - Course: Database for Analytics
 - Module: 3
 - Database Used: MongoDB
@@ -19,6 +19,10 @@
 
 ---
 
+
+**Note:** My database is named `restaurantsdb` and the collection is named `restaurants` (instead of `44661`, as originally suggested in the assignment instructions). All queries below use these names.
+
+
 ## Question 1
 
 When importing the documents from `restaurants-json.json`,
@@ -26,14 +30,15 @@ When importing the documents from `restaurants-json.json`,
 
 ### Answer
 
-_Write the number of documents imported._
+25358 documents were imported into the restaurants collection.
 
 ### Screenshot
 
-_Show evidence of how you determined this (for example, a count query)._
+Verified using a count query in the MongoDB shell.
 
 ```javascript
-// Your MongoDB command here
+use restaurantsdb
+db.restaurants.countDocuments()
 ```
 
 ![Q1 Screenshot](screenshots/q1_document_count.png)
@@ -44,12 +49,12 @@ _Show evidence of how you determined this (for example, a count query)._
 
 Before writing queries on the data,
 **what command** do you use to set the
-**MongoDB shell to operate on the `44661` database**?
+**MongoDB shell to operate on the `restaurantsdb` database**?
 
 ### MongoDB Command
 
 ```javascript
-// Your MongoDB command here
+use restaurantsdb
 ```
 
 ### Screenshot
@@ -60,14 +65,15 @@ Before writing queries on the data,
 
 ## Question 3
 
-Using your `restaurants` collection in the `44661` database,
+Using your `restaurants` collection in the `restaurantsdb` database,
 write the MongoDB query needed to
 **locate all documents in the `"Queens"` borough**.
 
 ### MongoDB Query
 
 ```javascript
-// Your MongoDB query here
+use restaurantsdb
+db.restaurants.find({ borough: "Queens" })
 ```
 
 ### Screenshot
@@ -78,14 +84,15 @@ write the MongoDB query needed to
 
 ## Question 4
 
-Using your `restaurants` collection in the `44661` database,
+Using your `restaurants` collection in the `restaurantsdb` database,
 write the MongoDB query needed to
 **find the number of restaurants in the `"Queens"` borough**.
 
 ### MongoDB Query
 
 ```javascript
-// Your MongoDB query here
+use restaurantsdb
+db.restaurants.countDocuments({ borough: "Queens" })
 ```
 
 ### Screenshot
@@ -96,7 +103,7 @@ write the MongoDB query needed to
 
 ## Question 5
 
-Using your `restaurants` collection in the `44661` database,
+Using your `restaurants` collection in the `restaurantsdb` database,
 write the MongoDB query needed to
 **find the number of restaurants** in the `"Queens"` borough
 **whose cuisine is `"Hamburgers"`**.
@@ -104,7 +111,8 @@ write the MongoDB query needed to
 ### MongoDB Query
 
 ```javascript
-// Your MongoDB query here
+use restaurantsdb
+db.restaurants.countDocuments({ borough: "Queens", cuisine: "Hamburgers" })
 ```
 
 ### Screenshot
@@ -115,7 +123,7 @@ write the MongoDB query needed to
 
 ## Question 6
 
-Using your `restaurants` collection in the `44661` database,
+Using your `restaurants` collection in the `restaurantsdb` database,
 write the MongoDB query needed to
 **find the number of restaurants in Zipcode `10460`**.
 
@@ -124,7 +132,8 @@ _Hint: Look up how to query **embedded documents**._
 ### MongoDB Query
 
 ```javascript
-// Your MongoDB query here
+use restaurantsdb
+db.restaurants.countDocuments({ "address.zipcode": "10460" })
 ```
 
 ### Screenshot
@@ -135,7 +144,7 @@ _Hint: Look up how to query **embedded documents**._
 
 ## Question 7
 
-Using your `restaurants` collection in the `44661` database,
+Using your `restaurants` collection in the `restaurantsdb` database,
 write the MongoDB query needed to
 **display only the names of restaurants in Zipcode `10460`**.
 
@@ -155,7 +164,8 @@ Your output should resemble:
 ### MongoDB Query
 
 ```javascript
-// Your MongoDB query here
+use restaurantsdb
+db.restaurants.find({ "address.zipcode": "10460" }, { name: 1, _id: 0 })
 ```
 
 ### Screenshot
@@ -166,7 +176,7 @@ Your output should resemble:
 
 ## Question 8
 
-Using your `restaurants` collection in the `44661` database,
+Using your `restaurants` collection in the `restaurantsdb` database,
 write the MongoDB query needed to
 **display only the names of restaurants whose name contains `"IHOP"`**,
 ignoring case.
@@ -179,7 +189,11 @@ Your results should include:
 ### MongoDB Query
 
 ```javascript
-// Your MongoDB query here
+use restaurantsdb
+db.restaurants.find(
+  { name: { $regex: "ihop", $options: "i" } },
+  { name: 1, _id: 0 }
+)
 ```
 
 ### Screenshot

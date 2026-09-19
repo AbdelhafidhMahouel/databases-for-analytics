@@ -34,7 +34,13 @@ along with the **number of official languages spoken**.
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT co.name, COUNT(*) AS num_languages
+FROM country co
+JOIN countrylanguage cl ON co.code = cl.countrycode
+WHERE cl.isofficial = 'T'
+GROUP BY co.name
+HAVING COUNT(*) > 2
+ORDER BY num_languages DESC;
 ```
 
 ### Screenshot
@@ -56,7 +62,9 @@ execute the query from Question 1 and
 ### Python Code
 
 ```python
-# Your three Python statements here
+query = "SELECT co.name, COUNT(*) AS num_languages FROM country co JOIN countrylanguage cl ON co.code = cl.countrycode WHERE cl.isofficial = 'T' GROUP BY co.name HAVING COUNT(*) > 2 ORDER BY num_languages DESC"
+df = pd.read_sql(query, engine)
+df
 ```
 
 ### Screenshot
@@ -77,7 +85,12 @@ to produce the following graph:
 ### Python Code
 
 ```python
-# Your Python code here
+import matplotlib.pyplot as plt
+
+df.plot(x='name', y='num_languages', kind='bar', legend=True)
+plt.xlabel('name')
+plt.tight_layout()
+plt.show()
 ```
 
 ### Screenshot

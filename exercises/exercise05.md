@@ -146,9 +146,6 @@ After looking at the data, **why is this the case?**
 
 _After looking at the 109 results from Question 4, I noticed that every email has a sent time of exactly 15:00:00, and every opened date is on the same day, only a few minutes to about 11 hours earlier than the sent time. The emails were not actually opened before they were sent. This is most likely a time zone problem. Both columns use the `timestamp without time zone` data type, so the database does not store which time zone each value is in. The sent date appears to be recorded in one time zone (such as UTC), while the opened date is recorded in the customer's local time. Since US time zones are several hours behind UTC, an email opened shortly after it was sent can look like it was opened before it was sent. This shows why it is important to store and compare dates in the same time zone, for example by using `timestamp with time zone`._
 
-### Screenshot (if requested by instructor)
-
-![Q5 Screenshot](screenshots/q5_explain_date_issue.png)
 
 ---
 

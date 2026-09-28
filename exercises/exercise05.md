@@ -1,8 +1,8 @@
 # Exercise 05: SQLDA Database - Dates, Data Quality, Arrays, and JSON
 
-- Name:
+- Name: Abdelhafidh Mahouel
 - Course: Database for Analytics
-- Module:
+- Module: 05
 - Database Used: `sqlda` (Sample Datasets)
 - Tools Used: PostgreSQL (pgAdmin or psql)
 
@@ -43,7 +43,9 @@ year
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT DISTINCT EXTRACT(YEAR FROM sent_date) AS year
+FROM emails
+ORDER BY year;
 ```
 
 ### Screenshot
@@ -68,7 +70,11 @@ count   year
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT COUNT(*) AS count,
+       EXTRACT(YEAR FROM sent_date) AS year
+FROM emails
+GROUP BY year
+ORDER BY year;
 ```
 
 ### Screenshot
@@ -90,7 +96,12 @@ Only include emails that contain **both** a sent date and an opened date.
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT sent_date,
+       opened_date,
+       opened_date - sent_date AS time_to_open
+FROM emails
+WHERE sent_date IS NOT NULL
+  AND opened_date IS NOT NULL;
 ```
 
 ### Screenshot
@@ -108,7 +119,13 @@ show emails that contain an **opened date BEFORE the sent date**.
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT email_id,
+       email_subject,
+       sent_date,
+       opened_date,
+       opened_date - sent_date AS time_difference
+FROM emails
+WHERE opened_date < sent_date;
 ```
 
 ### Screenshot
@@ -127,7 +144,7 @@ After looking at the data, **why is this the case?**
 
 ### Answer
 
-_Write your explanation here._
+_After looking at the 109 results from Question 4, I noticed that every email has a sent time of exactly 15:00:00, and every opened date is on the same day, only a few minutes to about 11 hours earlier than the sent time. The emails were not actually opened before they were sent. This is most likely a time zone problem. Both columns use the `timestamp without time zone` data type, so the database does not store which time zone each value is in. The sent date appears to be recorded in one time zone (such as UTC), while the opened date is recorded in the customer's local time. Since US time zones are several hours behind UTC, an email opened shortly after it was sent can look like it was opened before it was sent. This shows why it is important to store and compare dates in the same time zone, for example by using `timestamp with time zone`._
 
 ### Screenshot (if requested by instructor)
 
@@ -168,7 +185,7 @@ CREATE TEMP TABLE customer_dealership_distance AS (
 
 ### Answer
 
-_Write your explanation here._
+_This code calculates the distance between every customer and every dealership. The first statement creates a temporary table called `customer_points` that converts each customer's longitude and latitude into a single `point` value, and it skips any customers that are missing either coordinate. The second statement does the same thing for every dealership and stores the results in a temporary table called `dealership_points`. The third statement uses a `CROSS JOIN` to pair every customer with every dealership, and then uses the `<@>` operator from the `earthdistance` extension to calculate the distance in miles between the two points. The final result is a temporary table called `customer_dealership_distance` with one row for each customer and dealership pair and the distance between them, which could be used to find the closest dealership to each customer. Longitude is listed first in `point()` because it represents the x-axis and latitude represents the y-axis. Because these are temporary tables, they are automatically deleted when the database session ends._
 
 ---
 
@@ -188,7 +205,11 @@ For example - dealership 1 is below:
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT dealership_id,
+       ARRAY_AGG(last_name || ',' || first_name) AS salespeople
+FROM salespeople
+GROUP BY dealership_id
+ORDER BY dealership_id;
 ```
 
 ### Screenshot
@@ -214,7 +235,14 @@ Reference image:
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT s.dealership_id,
+       d.state,
+       COUNT(*) AS count,
+       ARRAY_AGG(s.last_name || ',' || s.first_name) AS array_agg
+FROM salespeople s
+JOIN dealerships d ON s.dealership_id = d.dealership_id
+GROUP BY s.dealership_id, d.state
+ORDER BY d.state, s.dealership_id;
 ```
 
 ### Screenshot
@@ -231,7 +259,8 @@ the **customers** table to **JSON**.
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT row_to_json(c)
+FROM customers c;
 ```
 
 ### Screenshot
@@ -258,7 +287,17 @@ Reference image:
 ### SQL
 
 ```sql
--- Your SQL here
+SELECT row_to_json(t)
+FROM (
+    SELECT s.dealership_id,
+           d.state,
+           COUNT(*) AS num_salespeople,
+           ARRAY_AGG(s.last_name || ',' || s.first_name) AS array_agg
+    FROM salespeople s
+    JOIN dealerships d ON s.dealership_id = d.dealership_id
+    GROUP BY s.dealership_id, d.state
+    ORDER BY d.state, s.dealership_id
+) t;
 ```
 
 ### Screenshot

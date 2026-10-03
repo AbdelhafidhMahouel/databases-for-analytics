@@ -2,7 +2,7 @@
 
 From the Operational Model to the Dimensional Model
 
-- Name:
+- Name: Abdelhafidh Mahouel
 - Course: Database for Analytics
 - Module: 6
 
@@ -125,4 +125,26 @@ In 1-2 short paragraphs, explain:
 
 #### Design Notes
 
-_Write your design notes here._
+I used three dimensions: **Dim_Date**, **Dim_Customer**, and **Dim_Part**.
+Every required question filters or groups by a day, month, quarter, or year, by a
+customer (including zip code), or by a part (including category), so these three
+are the only ones needed. I left out sales reps, orders, credit limits, balances,
+and inventory fields because none of the questions use them. Each dimension has a
+surrogate key, and the original operational keys (`custNumber`, `partNum`) are kept
+as normal attributes. The operational `address` field holds street, city, and state
+together, so I split it into `Street`, `City`, `State`, and `Zip` during the
+transform step, which makes the zip code question possible.
+
+The grain is **one row per customer, per part, per day**, because the requirement
+is daily sales and we do not need order-level detail. During ETL, the `orderline`
+rows are joined to `orders` (for the date and customer) and `parts` (for the unit
+price), then grouped by date, customer, and part. `Quantity` is the sum of
+`numOrdered`, and `Amount` is the sum of `numOrdered * unitPrice`. For example,
+"How many ax12 were sold on September 2, 1994?" sums `Quantity` where `PartNum =
+'ax12'` and `FullDate = '1994-09-02'`. "How much did customer 124 spend last
+year?" sums `Amount` for `CustNumber = 124` filtered on `Year`. "How many appliance
+items were sold in Q3 1994?" sums `Quantity` where `Category = 'appliance'`,
+`Quarter = 3`, and `Year = 1994`.
+
+The table definitions used to build the diagram are in
+[exercise06_star_schema.sql](exercise06_star_schema.sql).

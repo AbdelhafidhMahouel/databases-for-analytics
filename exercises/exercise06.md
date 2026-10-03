@@ -111,7 +111,7 @@ Save your diagram image in this repo and embed it below.
 
 #### Diagram
 
-![Star Schema Diagram](Star Schema.png)
+![Star Schema Diagram](star-schema.png)
 
 ---
 
